@@ -1,0 +1,90 @@
+const members = [
+  {id:1,ar:'حمد',en:'Hamad',roleAr:'الجد',roleEn:'Grandfather',initials:'حم',color:'#70412f',birthday:'16 Sep'},
+  {id:2,ar:'عائشة',en:'Aisha',roleAr:'الجدة',roleEn:'Grandmother',initials:'عا',color:'#8d5263',birthday:'3 Nov'},
+  {id:3,ar:'خالد',en:'Khalid',roleAr:'الأب',roleEn:'Father',initials:'خا',color:'#315c60',birthday:'18 Jan'},
+  {id:4,ar:'نورة',en:'Noora',roleAr:'العمة',roleEn:'Aunt',initials:'نو',color:'#846338',birthday:'1 Dec'},
+  {id:5,ar:'سارة',en:'Sara',roleAr:'الابنة',roleEn:'Daughter',initials:'سا',color:'#71547f',birthday:'12 Mar'},
+  {id:6,ar:'عمر',en:'Omar',roleAr:'الابن',roleEn:'Son',initials:'عم',color:'#446981',birthday:'24 Jun'},
+]
+const starterEvents=[
+  {id:1,day:'16',arMonth:'سبتمبر',enMonth:'September',ar:'عيد ميلاد الجد حمد',en:"Grandfather Hamad's birthday",time:'طوال اليوم · All day',type:'birthday'},
+  {id:2,day:'18',arMonth:'سبتمبر',enMonth:'September',ar:'جمعة العائلة',en:'Family Friday gathering',time:'7:00 PM · بيت الجد',type:'gathering'},
+  {id:3,day:'23',arMonth:'سبتمبر',enMonth:'September',ar:'جلسة تسجيل الحكايات',en:'Story recording circle',time:'5:30 PM · المجلس',type:'story'},
+]
+const starterMemories=[
+  {id:1,icon:'🎙️',ar:'حكايات الغوص واللؤلؤ',en:'Pearling stories',by:'الجد حمد · Grandfather Hamad',meta:'12:45',tint:'sand'},
+  {id:2,icon:'🥘',ar:'وصفة الهريس من يد يدّوه',en:"Grandmother's harees recipe",by:'الجدة عائشة · Grandmother Aisha',meta:'5 min',tint:'rose'},
+  {id:3,icon:'🇦🇪',ar:'اليوم الوطني 1985',en:'National Day 1985',by:'خالد المنصوري · Khalid',meta:'45 photos',tint:'green'},
+]
+const starterMessages=[
+  {id:1,member:1,text:'السلام عليكم يا عيال. لا تنسون جمعة العائلة يوم الجمعة القادم.',time:'4:30'},
+  {id:2,member:3,text:'وعليكم السلام يا الوالد، كلنا حاضرين إن شاء الله ❤️',time:'4:35'},
+  {id:3,member:5,text:'I’ll bring luqaimat and take the family photos! ☕',time:'4:40'},
+]
+const C={
+  ar:{hello:'مساء الخير، يا آل المنصوري',subtitle:'هنا تعيش حكاياتنا، وتكبر صلتنا كل يوم.',home:'الرئيسية',majlis:'المجلس',tree:'النسب',vault:'الذكريات',events:'المناسبات',legacy:'حكاياتنا',upcoming:'القادم لعائلتكم',seeAll:'عرض الكل',moments:'أحدث الذكريات',members:'أفراد العائلة',private:'مساحة عائلية خاصة',pulse:'نبض العائلة',active:'نشطون هذا الأسبوع',wishes:'تهنئة وصلت',stories:'حكاية محفوظة',quick:'قربهم منك',voice:'سجّل تهنئة صوتية',addMemory:'أضف ذكرى',plan:'خطط لجمعة',ask:'اسأل كبير العائلة',placeholder:'اكتب للعائلة…',newEvent:'مناسبة جديدة',add:'إضافة',cancel:'إلغاء',eventName:'اسم المناسبة',date:'التاريخ',vaultTitle:'خزينة الذكريات',vaultSub:'صور وصوت ووصفات لا تضيع مع مرور الوقت.',treeTitle:'شجرة عائلة آل المنصوري',treeSub:'اضغط على أي فرد لتتعرف إلى مكانه في الحكاية.',legacyTitle:'حكاياتنا',legacySub:'مكان بسيط لتسجيل صوت الكبار وحفظه للأجيال.',recording:'جارٍ التسجيل…',start:'ابدأ تسجيل الحكاية',stop:'إيقاف وحفظ',saved:'تم حفظ الحكاية الصوتية',access:'تكبير',notifications:'تنبيهات العائلة'},
+  en:{hello:'Good evening, Al Mansoori family',subtitle:'Where our stories live and our bonds grow stronger.',home:'Home',majlis:'Majlis',tree:'Nasab',vault:'Memories',events:'Events',legacy:'Our stories',upcoming:'Coming up for your family',seeAll:'See all',moments:'Recent memories',members:'Family members',private:'Private family space',pulse:'Family pulse',active:'active this week',wishes:'wishes received',stories:'stories preserved',quick:'Bring them closer',voice:'Record a voice wish',addMemory:'Add a memory',plan:'Plan a gathering',ask:'Ask an elder',placeholder:'Message your family…',newEvent:'New event',add:'Add',cancel:'Cancel',eventName:'Event name',date:'Date',vaultTitle:'Memory vault',vaultSub:'Photos, voices and recipes that remain through time.',treeTitle:'Al Mansoori family tree',treeSub:'Select a person to discover their place in the family story.',legacyTitle:'Our stories',legacySub:'A simple place to record elders and preserve their voices for generations.',recording:'Recording…',start:'Start recording a story',stop:'Stop & save',saved:'Voice story saved',access:'Larger text',notifications:'Family notifications'}
+}
+const get=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}}
+const save=(key,value)=>{localStorage.setItem(key,JSON.stringify(value));return value}
+const state={lang:get('wasl-lang','ar'),large:get('wasl-large',false),tab:'home',events:get('wasl-events',starterEvents),memories:get('wasl-memories',starterMemories),messages:get('wasl-messages',starterMessages),selected:1,recording:false,media:null}
+const app=document.querySelector('#root')
+const icon=(name)=>`<span class="ui-icon" aria-hidden="true">${({home:'⌂',majlis:'◌',tree:'♧',vault:'◇',events:'▣',legacy:'◉',bell:'♢',language:'文',user:'Aa',lock:'◆',sparkle:'✦',mic:'●',photo:'▧',calendar:'▦',message:'◌',arrow:'‹',plus:'＋',search:'⌕',gift:'♢',send:'➤',close:'×',check:'✓'}[name]||name)}</span>`
+const avatar=(m,size='md')=>`<span class="avatar avatar-${size}" style="background:${m.color}">${m.initials}</span>`
+const e=(s)=>String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))
+const t=()=>C[state.lang]
+
+function shell(){
+  const x=t(),rtl=state.lang==='ar'
+  document.documentElement.lang=state.lang;document.documentElement.dir=rtl?'rtl':'ltr'
+  app.innerHTML=`<div class="app ${state.large?'large-text':''}">
+    <header class="topbar"><div class="topbar-inner"><div class="brand"><div class="brand-mark">♥</div><div><b>WASL</b><span>وصل</span></div></div><div class="header-actions"><button class="pill-btn ${state.large?'active':''}" data-action="large">${icon('user')}<span>${x.access}</span></button><button class="pill-btn" data-action="language">${icon('language')}<span>${rtl?'EN':'عربي'}</span></button><button class="icon-btn notification" data-modal="notifications">${icon('bell')}<i>3</i></button></div></div></header>
+    <main>${view()}</main>
+    <nav class="bottom-nav" aria-label="Main navigation">${[['home','home',x.home],['majlis','majlis',x.majlis],['tree','tree',x.tree],['vault','vault',x.vault],['events','events',x.events],['legacy','legacy',x.legacy]].map(([id,ic,label])=>`<button class="${state.tab===id?'active':''}" data-tab="${id}">${icon(ic)}<span>${label}</span></button>`).join('')}</nav>
+    <div id="modal-root"></div><div id="toast-root"></div></div>`
+}
+function view(){return ({home:homeView,majlis:majlisView,tree:treeView,vault:vaultView,events:eventsView,legacy:legacyView}[state.tab])()}
+function homeView(){const x=t();return `<div class="page home-page"><section class="hero"><div class="hero-copy"><span class="eyebrow">${icon('lock')}${x.private}</span><h1>${x.hello}</h1><p>${x.subtitle}</p><div class="hero-members">${members.slice(0,5).map(m=>avatar(m,'sm')).join('')}<span>+9</span></div></div><div class="hero-art" aria-hidden="true"><div class="sun"></div><div class="tower t1"></div><div class="tower t2"></div><div class="tower t3"></div><div class="palm">✦</div><div class="dune"></div></div></section>
+  <section class="pulse-card"><div class="section-heading"><div><span class="kicker">${state.lang==='ar'?'اليوم':'Today'}</span><h2>${x.pulse}</h2></div>${icon('sparkle')}</div><div class="stats"><div><strong>11</strong><span>${x.active}</span></div><div><strong>8</strong><span>${x.wishes}</span></div><div><strong>127</strong><span>${x.stories}</span></div></div></section>
+  <section><div class="section-title"><h2>${x.quick}</h2></div><div class="quick-grid">${quick('mic',x.voice,'legacy')}${quick('photo',x.addMemory,null,'memory')}${quick('calendar',x.plan,null,'event')}${quick('message',x.ask,'majlis')}</div></section>
+  <section><div class="section-title"><h2>${x.upcoming}</h2><button data-tab="events">${x.seeAll}${icon('arrow')}</button></div><div class="event-strip">${state.events.slice(0,3).map(eventCard).join('')}</div></section>
+  <section><div class="section-title"><h2>${x.moments}</h2><button data-tab="vault">${x.seeAll}${icon('arrow')}</button></div><div class="memory-grid">${state.memories.slice(0,3).map(memoryCard).join('')}</div></section></div>`}
+function quick(ic,label,tab,modal){return `<button class="quick-card" ${tab?`data-tab="${tab}"`:`data-modal="${modal}"`}><span>${icon(ic)}</span><b>${label}</b>${icon('arrow')}</button>`}
+function eventCard(v){return `<article class="event-card ${v.type}"><div class="date-block"><strong>${v.day}</strong><span>${state.lang==='ar'?v.arMonth:v.enMonth}</span></div><div><span class="event-type">${v.type==='birthday'?'🎂':v.type==='story'?'🎙️':'☕'}</span><h3>${e(state.lang==='ar'?v.ar:v.en)}</h3><p>${e(v.time)}</p></div></article>`}
+function memoryCard(v){return `<article class="memory-card ${v.tint}"><div class="memory-visual"><span>${v.icon}</span><div class="arch"></div></div><div class="memory-copy"><small>${e(v.meta)}</small><h3>${e(state.lang==='ar'?v.ar:v.en)}</h3><p>${e(v.by)}</p></div></article>`}
+function pageHeader(kicker,title,sub,button=''){return `<section class="page-header"><div><span class="kicker">${kicker}</span><h1>${title}</h1><p>${sub}</p></div>${button}</section>`}
+function majlisView(){const x=t();return `<div class="page narrow">${pageHeader(`14 ${x.members}`,x.majlis,x.private,'<div class="online"><i></i> 6 online</div>')}<section class="chat-card"><div class="chat-date">اليوم · Today</div><div class="messages">${state.messages.map(v=>{const m=members.find(n=>n.id===v.member)||members[5];return `<div class="message ${v.member===6?'mine':''}">${avatar(m,'sm')}<div><b>${m.ar} · ${m.en}</b><p>${e(v.text)}</p><time>${v.time}</time></div></div>`}).join('')}</div><form class="composer" id="message-form"><button type="button">${icon('mic')}</button><input name="message" autocomplete="off" placeholder="${x.placeholder}"><button class="send">${icon('send')}</button></form></section></div>`}
+function treeView(){const x=t(),sel=members.find(m=>m.id===state.selected);const nodes=(a,b)=>members.slice(a,b).map(m=>`<button class="member-node ${sel.id===m.id?'active':''}" data-member="${m.id}">${avatar(m)}<b>${state.lang==='ar'?m.ar:m.en}</b><span>${state.lang==='ar'?m.roleAr:m.roleEn}</span></button>`).join('');return `<div class="page">${pageHeader(x.members,x.treeTitle,x.treeSub,icon('tree'))}<div class="tree-layout"><section class="tree-canvas"><div class="generation"><span>1</span>${nodes(0,2)}</div><div class="tree-line"></div><div class="generation"><span>2</span>${nodes(2,4)}</div><div class="tree-line"></div><div class="generation"><span>3</span>${nodes(4,6)}</div></section><aside class="member-detail">${avatar(sel,'lg')}<span class="kicker">${state.lang==='ar'?sel.roleAr:sel.roleEn}</span><h2>${sel.ar} · ${sel.en}</h2><p>${icon('gift')}${sel.birthday}</p><button class="primary" data-tab="majlis">${icon('message')}${state.lang==='ar'?'أرسل رسالة':'Send a message'}</button></aside></div></div>`}
+function vaultView(){const x=t();return `<div class="page">${pageHeader(`127 ${x.stories}`,x.vaultTitle,x.vaultSub,`<button class="primary" data-modal="memory">${icon('plus')}${x.addMemory}</button>`)}<div class="filter-row"><button class="active">${state.lang==='ar'?'الكل':'All'}</button><button>${state.lang==='ar'?'صور':'Photos'}</button><button>${state.lang==='ar'?'صوت':'Audio'}</button><button>${state.lang==='ar'?'وصفات':'Recipes'}</button><div class="search">${icon('search')}<input placeholder="${state.lang==='ar'?'ابحث في الذكريات':'Search memories'}"></div></div><div class="memory-grid vault-grid">${state.memories.map(memoryCard).join('')}</div></div>`}
+function eventsView(){const x=t(),sub=state.lang==='ar'?'أعياد الميلاد والجمعات والمواعيد المهمة في مكان واحد.':'Birthdays, gatherings and meaningful dates in one place.';return `<div class="page">${pageHeader(state.lang==='ar'?'معاً في كل مناسبة':'Together for every occasion',x.events,sub,`<button class="primary" data-modal="event">${icon('plus')}${x.newEvent}</button>`)}<div class="calendar-card"><div class="calendar-heading"><div>${icon('calendar')}<h2>September 2026</h2></div><span>${icon('bell')}${state.lang==='ar'?'التذكير التلقائي مفعّل':'Smart reminders on'}</span></div><div class="event-list">${state.events.map(eventCard).join('')}</div></div></div>`}
+function legacyView(){const x=t();return `<div class="page legacy-page"><section class="legacy-card"><div class="record-rings ${state.recording?'recording':''}"><div>${icon('mic')}</div></div><span class="kicker">${state.recording?x.recording:'WASL LEGACY'}</span><h1>${x.legacyTitle}</h1><p>${x.legacySub}</p><button class="record-btn ${state.recording?'stop':''}" data-action="record">${state.recording?'<span></span>':icon('mic')}${state.recording?x.stop:x.start}</button><div class="prompt-card">${icon('sparkle')}<div><b>سؤال اليوم · Today’s prompt</b><p>ما أجمل ذكرى لك من رمضان في طفولتك؟<br>What is your fondest childhood Ramadan memory?</p></div></div></section></div>`}
+
+function showModal(kind){const x=t();let body='';if(kind==='notifications')body=`<div class="notification-list">${notice('🎂',state.lang==='ar'?'عيد ميلاد الجد حمد بعد يومين':"Hamad's birthday is in two days",state.lang==='ar'?'سجّل له تهنئة صوتية من الآن':'Record a voice wish now')}${notice('📅',state.lang==='ar'?'جمعة العائلة يوم الجمعة':'Family gathering this Friday','7:00 PM · Al Mansoori Villa')}${notice('📸',state.lang==='ar'?'أضافت نورة 14 صورة جديدة':'Noora added 14 new photos',state.lang==='ar'?'ألبوم العيد 2026':'Eid 2026 album')}</div>`;
+  if(kind==='event')body=`<form class="form" id="event-form"><label>${x.eventName}<input name="title" required placeholder="${state.lang==='ar'?'مثال: عشاء العائلة':'e.g. Family dinner'}"></label><div class="form-row"><label>${x.date}<input name="date" type="date" required value="2026-09-25"></label><label>${state.lang==='ar'?'الوقت':'Time'}<input name="time" type="time" value="19:00"></label></div>${actions()}</form>`;
+  if(kind==='memory')body=`<form class="form" id="memory-form"><label>${state.lang==='ar'?'عنوان الذكرى':'Memory title'}<input name="title" required placeholder="${state.lang==='ar'?'رحلتنا إلى ليوا':'Our trip to Liwa'}"></label><label>${state.lang==='ar'?'نوع الذكرى':'Memory type'}<select name="type"><option>Photo</option><option>Story</option><option>Recipe</option><option>Voice note</option></select></label><div class="upload-zone">${icon('photo')}<span>${state.lang==='ar'?'اختر صورة أو ملفاً من جهازك':'Choose a photo or file from your device'}</span><input type="file"></div>${actions()}</form>`;
+  const titles={notifications:x.notifications,event:x.newEvent,memory:x.addMemory};document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop" data-action="close"><section class="modal" role="dialog" aria-modal="true"><header><h2>${titles[kind]}</h2><button class="icon-btn" data-action="close">${icon('close')}</button></header>${body}</section></div>`}
+function actions(){const x=t();return `<div class="form-actions"><button type="button" class="secondary" data-action="close">${x.cancel}</button><button class="primary">${x.add}</button></div>`}
+function notice(ic,title,detail){return `<article><span>${ic}</span><div><b>${title}</b><p>${detail}</p></div>${icon('arrow')}</article>`}
+function closeModal(){document.querySelector('#modal-root').innerHTML=''}
+function toast(text){const r=document.querySelector('#toast-root');r.innerHTML=`<div class="toast">${icon('check')}${text}</div>`;setTimeout(()=>r.innerHTML='',2600)}
+
+document.addEventListener('click',async ev=>{
+  const tab=ev.target.closest('[data-tab]')?.dataset.tab;if(tab){state.tab=tab;shell();return}
+  const modal=ev.target.closest('[data-modal]')?.dataset.modal;if(modal){showModal(modal);return}
+  const member=ev.target.closest('[data-member]')?.dataset.member;if(member){state.selected=+member;shell();return}
+  const action=ev.target.closest('[data-action]')?.dataset.action
+  if(action==='language'){state.lang=save('wasl-lang',state.lang==='ar'?'en':'ar');shell()}
+  if(action==='large'){state.large=save('wasl-large',!state.large);shell()}
+  if(action==='close'){if(ev.target.classList.contains('modal-backdrop')||ev.target.closest('button'))closeModal()}
+  if(action==='record')await toggleRecording()
+})
+document.addEventListener('submit',ev=>{
+  ev.preventDefault();const d=new FormData(ev.target)
+  if(ev.target.id==='message-form'){const text=d.get('message')?.trim();if(text){state.messages=save('wasl-messages',[...state.messages,{id:Date.now(),member:6,text,time:state.lang==='ar'?'الآن':'Now'}]);shell()}}
+  if(ev.target.id==='event-form'){const date=new Date(`${d.get('date')}T12:00:00`);state.events=save('wasl-events',[...state.events,{id:Date.now(),day:String(date.getDate()).padStart(2,'0'),arMonth:date.toLocaleString('ar-AE',{month:'long'}),enMonth:date.toLocaleString('en-AE',{month:'long'}),ar:d.get('title'),en:d.get('title'),time:d.get('time')||'19:00',type:'gathering'}]);closeModal();shell();toast(state.lang==='ar'?'تمت إضافة المناسبة وإبلاغ العائلة':'Event added and family notified')}
+  if(ev.target.id==='memory-form'){const title=d.get('title').trim();state.memories=save('wasl-memories',[{id:Date.now(),icon:'✨',ar:title,en:title,by:state.lang==='ar'?'أنت · الآن':'You · now',meta:d.get('type'),tint:'gold'},...state.memories]);closeModal();shell();toast(state.lang==='ar'?'حُفظت الذكرى في خزينة العائلة':'Memory saved to the family vault')}
+})
+async function toggleRecording(){if(state.recording){state.media?.stop();state.recording=false;state.memories=save('wasl-memories',[{id:Date.now(),icon:'🎙️',ar:'حكاية صوتية جديدة',en:'New voice story',by:state.lang==='ar'?'أنت · الآن':'You · now',meta:'Audio',tint:'sand'},...state.memories]);shell();toast(t().saved);return}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});state.media=new MediaRecorder(stream);state.media.onstop=()=>stream.getTracks().forEach(v=>v.stop());state.media.start()}catch{toast(state.lang==='ar'?'وضع العرض: محاكاة التسجيل':'Demo mode: recording simulated')}state.recording=true;shell()}
+
+shell()
+if('serviceWorker'in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))
