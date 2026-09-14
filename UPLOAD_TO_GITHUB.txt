@@ -1,0 +1,21 @@
+WASL — QUICK GITHUB UPLOAD
+==========================
+
+1. Unzip wasl-app.zip on your computer.
+2. Open the extracted "wasl-app" folder.
+3. On your GitHub upload page, drag in ALL items inside that folder.
+   Keep the folders named .github, public, scripts, and src.
+4. Enter this commit message: Launch WASL family app
+5. Click "Commit changes".
+6. In your repository, open Settings > Pages.
+7. Under "Build and deployment", select "Deploy from a branch".
+8. Choose the "main" branch and "/(root)", then click Save.
+
+Your public link will then appear in Settings > Pages. The site can run directly
+from the uploaded files; no package installation is needed.
+
+IMPORTANT
+---------
+This is a competition-ready prototype. It stores demo data only in the current
+browser. Before real families upload private memories, connect a secure backend,
+user authentication, consent controls, and encrypted media storage.
